@@ -4,6 +4,8 @@ Simple multiLayer perceptron code for MNIST
 Author: Suzanne Wetstein
 """
 
+#%% importing libraries
+
 # disable overly verbose tensorflow logging
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
@@ -20,6 +22,8 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Flatten, Dense
 from tensorflow.keras.callbacks import TensorBoard
 
+
+#%%loading the dataset and preprocessing the data
 
 # load the dataset using the builtin Keras method
 (X_train, y_train), (X_test, y_test) = mnist.load_data()
@@ -60,6 +64,9 @@ y_train = to_categorical(y_train, 10)
 y_val = to_categorical(y_val, 10)
 y_test = to_categorical(y_test, 10)
 
+#%% Creating the models for exercise 1:
+    
+    #model_1a: a single hidden layer of 64 neurons
 
 model = Sequential()
 # flatten the 28x28x1 pixel input images to a row of pixels (a 1D-array)
@@ -69,18 +76,108 @@ model.add(Dense(64, activation='relu'))
 # output layer with 10 nodes (one for each class) and softmax nonlinearity
 model.add(Dense(10, activation='softmax')) 
 
-
-# compile the model
+# compile the model_1
 model.compile(loss='categorical_crossentropy', optimizer='sgd', metrics=['accuracy'])
 
 # use this variable to name your model
-model_name="my_first_model"
+model_name="model_1a"
 
 # create a way to monitor our model in Tensorboard
 tensorboard = TensorBoard("logs/" + model_name)
 
 # train the model
-model.fit(X_train, y_train, batch_size=32, epochs=10, verbose=1, validation_data=(X_val, y_val), callbacks=[tensorboard])
+model.fit(X_train, y_train, batch_size=32, epochs=20, verbose=1, validation_data=(X_val, y_val), callbacks=[tensorboard])
+
+
+score = model.evaluate(X_test, y_test, verbose=0)
+
+
+print("Loss: ",score[0])
+print("Accuracy: ",score[1])
+
+#%% Model_1b: two hidden layers of 64 neurons
+
+model = Sequential()
+# flatten the 28x28x1 pixel input images to a row of pixels (a 1D-array)
+model.add(Flatten(input_shape=(28,28,1))) 
+# fully connected layer with 64 neurons and ReLU nonlinearity
+model.add(Dense(64, activation='relu'))
+# fully connected layer with 64 neurons and ReLU nonlinearity
+model.add(Dense(64, activation='relu'))
+# output layer with 10 nodes (one for each class) and softmax nonlinearity
+model.add(Dense(10, activation='softmax')) 
+
+# compile the model_1
+model.compile(loss='categorical_crossentropy', optimizer='sgd', metrics=['accuracy'])
+
+# use this variable to name your model
+model_name="model_1b"
+
+# create a way to monitor our model in Tensorboard
+tensorboard = TensorBoard("logs/" + model_name)
+
+# train the model
+model.fit(X_train, y_train, batch_size=32, epochs=20, verbose=1, validation_data=(X_val, y_val), callbacks=[tensorboard])
+
+
+score = model.evaluate(X_test, y_test, verbose=0)
+
+
+print("Loss: ",score[0])
+print("Accuracy: ",score[1])
+
+#%% Model_1c: two hidden layers of 64 neurons
+
+model = Sequential()
+# flatten the 28x28x1 pixel input images to a row of pixels (a 1D-array)
+model.add(Flatten(input_shape=(28,28,1))) 
+# fully connected layer with 64 neurons and ReLU nonlinearity
+model.add(Dense(128, activation='relu'))
+# output layer with 10 nodes (one for each class) and softmax nonlinearity
+model.add(Dense(10, activation='softmax')) 
+
+# compile the model_1
+model.compile(loss='categorical_crossentropy', optimizer='sgd', metrics=['accuracy'])
+
+# use this variable to name your model
+model_name="model_1c"
+
+# create a way to monitor our model in Tensorboard
+tensorboard = TensorBoard("logs/" + model_name)
+
+# train the model
+model.fit(X_train, y_train, batch_size=32, epochs=20, verbose=1, validation_data=(X_val, y_val), callbacks=[tensorboard])
+
+
+score = model.evaluate(X_test, y_test, verbose=0)
+
+
+print("Loss: ",score[0])
+print("Accuracy: ",score[1])
+
+#%% Model_1d: two hidden layers of 64 neurons
+
+model = Sequential()
+# flatten the 28x28x1 pixel input images to a row of pixels (a 1D-array)
+model.add(Flatten(input_shape=(28,28,1))) 
+# fully connected layer with 64 neurons and ReLU nonlinearity
+model.add(Dense(128, activation='relu'))
+# fully connected layer with 64 neurons and ReLU nonlinearity
+model.add(Dense(128, activation='relu'))
+# output layer with 10 nodes (one for each class) and softmax nonlinearity
+model.add(Dense(10, activation='softmax')) 
+
+# compile the model_1
+model.compile(loss='categorical_crossentropy', optimizer='sgd', metrics=['accuracy'])
+
+# use this variable to name your model
+model_name="model_1d"
+
+# create a way to monitor our model in Tensorboard
+tensorboard = TensorBoard("logs/" + model_name)
+
+# train the model
+model.fit(X_train, y_train, batch_size=32, epochs=20, verbose=1, validation_data=(X_val, y_val), callbacks=[tensorboard])
 
 
 score = model.evaluate(X_test, y_test, verbose=0)
