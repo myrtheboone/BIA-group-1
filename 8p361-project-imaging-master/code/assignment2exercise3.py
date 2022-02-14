@@ -114,9 +114,9 @@ for i in range(y_test.shape[0]):
         y_test_4[i][3]=1        
 
 
-#%% Creating the models for exercise 1:
+#%% Creating the model for exercise 3
     
-    #model_1a: a single hidden layer of 64 neurons
+    #model_3: Two hidden layers of 64 neurons
 
 model = Sequential()
 # flatten the 28x28x1 pixel input images to a row of pixels (a 1D-array)
@@ -128,7 +128,7 @@ model.add(Dense(64, activation='relu'))
 # output layer with 10 nodes (one for each class) and softmax nonlinearity
 model.add(Dense(4, activation='softmax')) 
 
-# compile the model_1
+# compile the model_3
 model.compile(loss='categorical_crossentropy', optimizer='sgd', metrics=['accuracy'])
 
 # use this variable to name your model
