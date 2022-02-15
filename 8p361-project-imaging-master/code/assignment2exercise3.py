@@ -126,7 +126,7 @@ model.add(Flatten(input_shape=(28,28,1)))
 model.add(Dense(64, activation='relu'))
 # fully connected layer with 64 neurons and ReLU nonlinearity
 model.add(Dense(64, activation='relu'))
-# output layer with 10 nodes (one for each class) and softmax nonlinearity
+# output layer with 4 nodes (one for each class) and softmax nonlinearity
 model.add(Dense(4, activation='softmax')) 
 
 # compile the model_3
