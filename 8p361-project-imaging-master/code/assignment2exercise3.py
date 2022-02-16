@@ -73,7 +73,8 @@ y_test_4 = np.zeros((10000,4))
 for i in range(y_train.shape[0]):
     
     ytr = y_train[i]
-   #filling the new classes for the training set
+    
+    #filling the new classes for the training set
     if ytr[1] ==1 or ytr[7]==1:
         y_train_4[i][0] = 1
     if ytr[0] ==1 or ytr[6]==1 or ytr[8]==1 or ytr[9]==1:
@@ -125,7 +126,7 @@ model.add(Flatten(input_shape=(28,28,1)))
 model.add(Dense(64, activation='relu'))
 # fully connected layer with 64 neurons and ReLU nonlinearity
 model.add(Dense(64, activation='relu'))
-# output layer with 10 nodes (one for each class) and softmax nonlinearity
+# output layer with 4 nodes (one for each class) and softmax nonlinearity
 model.add(Dense(4, activation='softmax')) 
 
 # compile the model_3
@@ -140,9 +141,9 @@ tensorboard = TensorBoard("logs/" + model_name)
 # train the model
 model.fit(X_train, y_train_4, batch_size=32, epochs=20, verbose=1, validation_data=(X_val, y_val_4), callbacks=[tensorboard])
 
-
+#calculate the scores of the model
 score = model.evaluate(X_test, y_test_4, verbose=0)
 
-
+#print the scores
 print("Loss: ",score[0])
 print("Accuracy: ",score[1])
