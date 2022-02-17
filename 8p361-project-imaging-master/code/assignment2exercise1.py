@@ -206,7 +206,7 @@ model.add(Dense(64, activation='relu'))
 # output layer with 10 nodes (one for each class) and softmax nonlinearity
 model.add(Dense(10, activation='softmax')) 
 
-# compile the model_1d
+# compile the model_1e
 model.compile(loss='categorical_crossentropy', optimizer='sgd', metrics=['accuracy'])
 
 # use this variable to name your model
