@@ -185,3 +185,42 @@ score = model.evaluate(X_test, y_test, verbose=0)
 #print the scores
 print("Loss: ",score[0])
 print("Accuracy: ",score[1])
+
+#%% Model_1e: Six hidden layers of 128 neurons
+
+model = Sequential()
+# flatten the 28x28x1 pixel input images to a row of pixels (a 1D-array)
+model.add(Flatten(input_shape=(28,28,1))) 
+# fully connected layer with 64 neurons and ReLU nonlinearity
+model.add(Dense(64, activation='relu'))
+# fully connected layer with 64 neurons and ReLU nonlinearity
+model.add(Dense(64, activation='relu'))
+# fully connected layer with 64 neurons and ReLU nonlinearity
+model.add(Dense(64, activation='relu'))
+# fully connected layer with 64 neurons and ReLU nonlinearity
+model.add(Dense(64, activation='relu'))
+# fully connected layer with 64 neurons and ReLU nonlinearity
+model.add(Dense(64, activation='relu'))
+# fully connected layer with 64 neurons and ReLU nonlinearity
+model.add(Dense(64, activation='relu'))
+# output layer with 10 nodes (one for each class) and softmax nonlinearity
+model.add(Dense(10, activation='softmax')) 
+
+# compile the model_1d
+model.compile(loss='categorical_crossentropy', optimizer='sgd', metrics=['accuracy'])
+
+# use this variable to name your model
+model_name="model_1e"
+
+# create a way to monitor our model in Tensorboard
+tensorboard = TensorBoard("logs/" + model_name)
+
+# train the model
+model.fit(X_train, y_train, batch_size=32, epochs=20, verbose=1, validation_data=(X_val, y_val), callbacks=[tensorboard])
+
+#calculate the scores of the model
+score = model.evaluate(X_test, y_test, verbose=0)
+
+#print the scores
+print("Loss: ",score[0])
+print("Accuracy: ",score[1])
