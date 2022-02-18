@@ -186,7 +186,7 @@ score = model.evaluate(X_test, y_test, verbose=0)
 print("Loss: ",score[0])
 print("Accuracy: ",score[1])
 
-#%% Model_1e: Six hidden layers of 128 neurons
+#%% Model_1e: Six hidden layers of 64 neurons
 
 model = Sequential()
 # flatten the 28x28x1 pixel input images to a row of pixels (a 1D-array)
