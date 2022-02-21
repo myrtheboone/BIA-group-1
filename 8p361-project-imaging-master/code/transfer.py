@@ -50,7 +50,7 @@ input_shape = (IMAGE_SIZE, IMAGE_SIZE, 3)
 input = Input(input_shape)
 
 # get the pretrained model, cut out the top layer
-pretrained = MobileNetV2(input_shape=input_shape, include_top=False, weights=None)
+pretrained = MobileNetV2(input_shape=input_shape, include_top=False, weights='imagenet')
 
 # if the pretrained model it to be used as a feature extractor, and not for
 # fine-tuning, the weights of the model can be frozen in the following way
@@ -71,11 +71,11 @@ model.compile(SGD(learning_rate=0.001, momentum=0.95), loss = 'binary_crossentro
 model.summary()
 
 # get the data generators
-train_gen, val_gen = get_pcam_generators("C:\TUE\8P361")
+train_gen, val_gen = get_pcam_generators('/change/me/to/dataset/path')
 
 
 # save the model and weights
-model_name = 'my_first_transfer_model_random_initialization'
+model_name = 'my_first_transfer_model'
 model_filepath = model_name + '.json'
 weights_filepath = model_name + '_weights.hdf5'
 
