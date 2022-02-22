@@ -10,6 +10,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
 import tensorflow as tf
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential
@@ -17,6 +18,7 @@ from tensorflow.keras.layers import Dense, Flatten
 from tensorflow.keras.layers import Conv2D, MaxPool2D
 from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
+import pandas as pd
 
 # unused for now, to be used for ROC analysis
 from sklearn.metrics import roc_curve, auc
@@ -78,7 +80,7 @@ model = get_model()
 
 
 # get the data generators
-train_gen, val_gen = get_pcam_generators('/change/me/to/dataset/path')
+train_gen, val_gen = get_pcam_generators(r'C:/Users//20192024//Documents//Project_BIA')
 
 
 
@@ -111,3 +113,68 @@ history = model.fit(train_gen, steps_per_epoch=train_steps,
 # ROC analysis
 
 # TODO Perform ROC analysis on the validation set
+
+val_prob = model.predict(val_gen)
+#predicted_class_indices=np.argmax(val_prob,axis=1)
+# labels = (val_gen.class_indices)
+# labels = dict((v,k) for k,v in labels.items())
+# predictions = [labels[k] for k in predicted_class_indices]
+filenames=val_gen.filenames
+val_true_labels = []
+
+for i in filenames:
+    val_true_labels.append(int(i[0]))
+
+val_true_array = np.array(val_true_labels)
+
+val_prob_array = np.array(val_prob)
+
+val_true_array = val_true_array.reshape(16000,1)
+
+# results=pd.DataFrame({"Filename":filenames,
+#                       "Predictions":predictions})
+
+# Plotting the ROC curve
+
+fpr , tpr , thresholds = roc_curve(val_true_labels, val_prob)
+
+def plot_roc_curve(fpr,tpr): 
+  plt.plot(fpr,tpr) 
+  plt.axis([0,1,0,1]) 
+  plt.xlabel('False Positive Rate') 
+  plt.ylabel('True Positive Rate') 
+  plt.show()    
+  
+plot_roc_curve (fpr,tpr) 
+
+
+
+fpr = dict()
+tpr = dict()
+roc_auc = dict()
+for i in range(2):
+    fpr[i], tpr[i], _ = roc_curve(val_true_array[i], val_prob_array[i])
+    roc_auc[i] = auc(fpr[i], tpr[i])
+
+# Compute micro-average ROC curve and ROC area
+fpr["micro"], tpr["micro"], _ = roc_curve(val_true_array.ravel(), val_prob_array.ravel())
+roc_auc["micro"] = auc(fpr["micro"], tpr["micro"])
+
+plt.figure()
+lw = 2
+plt.plot(
+    fpr['micro'],
+    tpr['micro'],
+    color="darkorange",
+    lw=lw,
+    label="ROC curve (area = %0.2f)" % roc_auc['micro'],
+)
+plt.plot([0, 1], [0, 1], color="navy", lw=lw, linestyle="--")
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.xlabel("False Positive Rate")
+plt.ylabel("True Positive Rate")
+plt.title("Receiver operating characteristic example")
+plt.legend(loc="lower right")
+plt.show()
+
