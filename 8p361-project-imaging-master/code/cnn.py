@@ -78,12 +78,12 @@ model = get_model()
 
 
 # get the data generators
-train_gen, val_gen = get_pcam_generators('/change/me/to/dataset/path')
+train_gen, val_gen = get_pcam_generators("C:\TUE\8P361")
 
 
 
 # save the model and weights
-model_name = 'my_first_cnn_model'
+model_name = 'cnn_model_assignment4'
 model_filepath = model_name + '.json'
 weights_filepath = model_name + '_weights.hdf5'
 
