@@ -46,7 +46,10 @@ def get_pcam_generators(base_dir, train_batch_size=32, val_batch_size=32):
      val_gen = datagen.flow_from_directory(valid_path,
                                              target_size=(IMAGE_SIZE, IMAGE_SIZE),
                                              batch_size=val_batch_size,
-                                             class_mode='binary')
+                                             class_mode='binary', shuffle = False) 
+     # NB: first SHUFFLE = FALSE was not specified in the val_gen definition
+     # This was however specified in the code in the jupyter notebook
+     # This was the reason for the odd ROC curves
 
      return train_gen, val_gen
 
