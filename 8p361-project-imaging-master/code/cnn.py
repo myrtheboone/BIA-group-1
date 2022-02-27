@@ -136,6 +136,8 @@ def plot_roc_curve(fpr,tpr):
   plt.axis([0,1,0,1]) 
   plt.xlabel('False Positive Rate') 
   plt.ylabel('True Positive Rate') 
+  plt.title('ROC curve - model with dense layers')
   plt.show()    
   
 plot_roc_curve (fpr,tpr) 
+auc_score = auc(fpr, tpr)
