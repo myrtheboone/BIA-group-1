@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Feb 25 11:14:29 2022
+
+@author: 20192024
+"""
 '''
 TU/e BME Project Imaging 2021
 Convolutional neural network for PCAM
@@ -18,7 +24,6 @@ from tensorflow.keras.layers import Conv2D, MaxPool2D
 from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
 import matplotlib.pyplot as plt
-
 # unused for now, to be used for ROC analysis
 from sklearn.metrics import roc_curve, auc
 
@@ -55,30 +60,35 @@ def get_pcam_generators(base_dir, train_batch_size=32, val_batch_size=32):
      return train_gen, val_gen
 
 
-def get_model(kernel_size=(3,3), pool_size=(4,4), first_filters=32, second_filters=64):
+# Now we replace the last two dense layers with convolutional layers and examine the effect on model performance
+# by checking the ROC curves and loss curves on training and validation dataset
+# Since we do not have the ground truth of the test set, model performance will be evaluated on the test set.
+
+def get_model_fullyconv(kernel_size=(3,3), pool_size=(4,4), first_filters=32, second_filters=64):
+
 
      # build the model
      model = Sequential()
 
      model.add(Conv2D(first_filters, kernel_size, activation = 'relu', padding = 'same', input_shape = (IMAGE_SIZE, IMAGE_SIZE, 3)))
-     model.add(MaxPool2D(pool_size = pool_size))
+     model.add(MaxPool2D(pool_size = pool_size)) 
 
      model.add(Conv2D(second_filters, kernel_size, activation = 'relu', padding = 'same'))
      model.add(MaxPool2D(pool_size = pool_size))
 
+     model.add(Conv2D(64, (6,6), activation = 'relu'))
+     model.add(Conv2D(1, (1,1), activation = 'sigmoid'))
      model.add(Flatten())
-     model.add(Dense(64, activation = 'relu'))
-     model.add(Dense(1, activation = 'sigmoid'))
 
-
+    
+    
      # compile the model
      model.compile(SGD(learning_rate=0.01, momentum=0.95), loss = 'binary_crossentropy', metrics=['accuracy'])
 
      return model
 
-
 # get the model
-model = get_model()
+model_fullyconv = get_model_fullyconv()
 
 
 # get the data generators
@@ -87,11 +97,11 @@ train_gen, val_gen = get_pcam_generators('C:/Users//20192024//Documents//Project
 
 
 # save the model and weights
-model_name = 'cnn_model_assignment4'
+model_name = 'model_fully_conv'
 model_filepath = model_name + '.json'
 weights_filepath = model_name + '_weights.hdf5'
 
-model_json = model.to_json() # serialize model to JSON
+model_json = model_fullyconv.to_json() # serialize model to JSON
 with open(model_filepath, 'w') as json_file:
     json_file.write(model_json)
 
@@ -106,7 +116,7 @@ callbacks_list = [checkpoint, tensorboard]
 train_steps = train_gen.n//train_gen.batch_size
 val_steps = val_gen.n//val_gen.batch_size
 
-history = model.fit(train_gen, steps_per_epoch=train_steps,
+history = model_fullyconv.fit(train_gen, steps_per_epoch=train_steps,
                     validation_data=val_gen,
                     validation_steps=val_steps,
                     epochs=3,
@@ -114,7 +124,7 @@ history = model.fit(train_gen, steps_per_epoch=train_steps,
 
 # ROC analysis
 
-val_prob = model.predict(val_gen)
+val_prob = model_fullyconv.predict(val_gen)
 filenames=val_gen.filenames
 val_true_labels = []
 
@@ -136,7 +146,7 @@ def plot_roc_curve(fpr,tpr):
   plt.axis([0,1,0,1]) 
   plt.xlabel('False Positive Rate') 
   plt.ylabel('True Positive Rate') 
-  plt.title('ROC curve - model with dense layers')
+  plt.title('ROC curve - model with only convolutional layers')
   plt.show()    
   
 plot_roc_curve (fpr,tpr) 
