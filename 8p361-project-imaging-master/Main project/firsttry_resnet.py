@@ -104,3 +104,26 @@ def plot_roc_curve(fpr,tpr):
 plot_roc_curve (fpr,tpr) 
 auc_score = auc(fpr, tpr)
 
+# Plot accuracy and loss curves of ResNet
+
+print(history.history.keys())
+# summarize history for accuracy
+plt.plot(history.history['acc'])
+plt.plot(history.history['val_acc'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()
+# summarize history for loss
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()
+
+# Save model
+
+base_model.save('C:/Users//20192024//Documents//Project_BIA//BIA-group-1//8p361-project-imaging-master//Main project')
