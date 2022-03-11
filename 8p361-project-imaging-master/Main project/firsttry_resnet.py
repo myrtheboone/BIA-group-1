@@ -92,17 +92,20 @@ val_true_array = val_true_array.reshape(16000,1)
 # Plotting the ROC curve
 
 fpr , tpr , thresholds = roc_curve(val_true_labels, val_prob)
+auc_score = auc(fpr, tpr)
 
 def plot_roc_curve(fpr,tpr): 
-  plt.plot(fpr,tpr) 
+  plt.plot(fpr,tpr, label="ROC curve (area = {0:0.2f})".format(auc_score)) 
   plt.axis([0,1,0,1]) 
   plt.xlabel('False Positive Rate') 
   plt.ylabel('True Positive Rate') 
   plt.title('ROC curve - model with dense layers')
+  plt.legend(loc='lower right')
   plt.show()    
   
 plot_roc_curve (fpr,tpr) 
-auc_score = auc(fpr, tpr)
+
+
 
 # Plot accuracy and loss curves of ResNet
 
