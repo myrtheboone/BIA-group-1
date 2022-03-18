@@ -45,7 +45,7 @@ def get_pcam_generators(base_dir, train_batch_size=32, val_batch_size=32):
      train_gen = datagen.flow_from_directory(train_path,
                                              target_size=(IMAGE_SIZE, IMAGE_SIZE),
                                              batch_size=train_batch_size,
-                                             class_mode='binary')
+                                             class_mode='binary', shuffle = False)
 
      val_gen = datagen.flow_from_directory(valid_path,
                                              target_size=(IMAGE_SIZE, IMAGE_SIZE),
@@ -61,17 +61,40 @@ train_gen, val_gen = get_pcam_generators('C:/Users//20192024//Documents//Project
 base_model = Sequential()
 base_model.add(ResNet50(include_top=False, weights='imagenet', pooling='max'))
 base_model.add(Dense(1, activation='sigmoid'))
+# add dropout layer here
 
 base_model.compile(optimizer = RMSprop(lr=0.0001), loss = 'binary_crossentropy', metrics = ['acc'])
+
+
+# save the model and weights
+# JENS LET OP HIERONDER AANPASSEN
+
+model_name = 'model_dropout_0.5' #andere keer 0.75 (voor Myrthe)
+model_filepath = model_name + '.json'
+weights_filepath = model_name + '_weights.hdf5'
+
+model_dropout_05_json = base_model.to_json() # serialize model to JSON
+with open(model_filepath, 'w') as json_file:
+    json_file.write(model_dropout_05_json)
+
+
+# define the model checkpoint and Tensorboard callbacks
+checkpoint = ModelCheckpoint(weights_filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
+tensorboard = TensorBoard(os.path.join('logs', model_name))
+callbacks_list = [checkpoint, tensorboard]
+
+# train the model
 
 train_steps = train_gen.n//train_gen.batch_size
 val_steps = val_gen.n//val_gen.batch_size
 
+
+
+
 history = base_model.fit(train_gen, steps_per_epoch=train_steps,
                     validation_data=val_gen,
                     validation_steps=val_steps,
-                    epochs=3)
-                    #callbacks=callbacks_list)
+                    epochs=1, callbacks=callbacks_list)
 
 
 #Plot ROC curves of ResNet
@@ -107,7 +130,7 @@ plot_roc_curve (fpr,tpr)
 
 
 
-# Plot accuracy and loss curves of ResNet
+# Plot accuracy and loss curves of ResNet from model history
 
 print(history.history.keys())
 # summarize history for accuracy
