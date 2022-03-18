@@ -1,0 +1,37 @@
+Algorithm parameters
+- Learning rate
+- Batch size
+- Solver
+- Number of iterations
+- Number of epochs
+- Loss
+
+
+- 1 epoch
+
+
+Model parameters
+- Activation functions last layer
+--> sigmoid
+
+
+- DropOut probability --> dropout layer toevoegen en met welke probability?
+* Een keer zonder dropout layer en dan kijken wat het resultaat is en daarna met dropoutlayer doen en met probability 0.25, 0.5 en 0.75
+--> hiermee spelen / tunen
+
+
+- Pooling method
+--> max
+
+
+- Weights (random or pretrained (imagenet))
+--> weights pretrained on imagenet
+
+
+Zelfstudie
+* Eerst onafhankelijk de model parameters tunen
+- Zonder dropout layer en met dropoutlayer met probability 0.25 --> Jens
+- Met dropoutlayer met probability 0.5 en 0.75 --> Myrthe
+
+* Ondertussen ook onderzoek doen naar een goede procedure voor de algorithm parameters
+* In het weekend een meeting doen voor een update en daarna werken aan optimaliseren algorithm parameters
