@@ -14,7 +14,7 @@ import numpy as np
 
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Flatten
+from tensorflow.keras.layers import Dense, Flatten, Dropout
 from tensorflow.keras.layers import Conv2D, MaxPool2D
 from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
@@ -60,6 +60,7 @@ train_gen, val_gen = get_pcam_generators('C:/Users//20192024//Documents//Project
 
 base_model = Sequential()
 base_model.add(ResNet50(include_top=False, weights='imagenet', pooling='max'))
+base_model.add(Dropout(0.25))
 base_model.add(Dense(1, activation='sigmoid'))
 # add dropout layer here
 
