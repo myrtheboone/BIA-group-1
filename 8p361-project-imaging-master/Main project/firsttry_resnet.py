@@ -70,7 +70,7 @@ base_model.compile(optimizer = RMSprop(lr=0.0001), loss = 'binary_crossentropy',
 # save the model and weights
 # JENS LET OP HIERONDER AANPASSEN
 
-model_name = 'model_dropout_0.5' #andere keer 0.75 (voor Myrthe)
+model_name = 'model_dropout_0.25' #andere keer 0.75 (voor Myrthe)
 model_filepath = model_name + '.json'
 weights_filepath = model_name + '_weights.hdf5'
 
@@ -152,5 +152,5 @@ plt.legend(['train', 'test'], loc='upper left')
 plt.show()
 
 # Save model
-
+#CHECK VOOR GOEDE PATH
 base_model.save('C:/Users//20192024//Documents//Project_BIA//BIA-group-1//8p361-project-imaging-master//Main project')
