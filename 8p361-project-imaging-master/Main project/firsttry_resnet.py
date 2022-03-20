@@ -14,7 +14,7 @@ import numpy as np
 
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Flatten
+from tensorflow.keras.layers import Dense, Flatten, Dropout
 from tensorflow.keras.layers import Conv2D, MaxPool2D
 from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
@@ -60,6 +60,7 @@ train_gen, val_gen = get_pcam_generators('C:/Users//20192024//Documents//Project
 
 base_model = Sequential()
 base_model.add(ResNet50(include_top=False, weights='imagenet', pooling='max'))
+base_model.add(Dropout(0.25))
 base_model.add(Dense(1, activation='sigmoid'))
 # add dropout layer here
 
@@ -69,7 +70,7 @@ base_model.compile(optimizer = RMSprop(lr=0.0001), loss = 'binary_crossentropy',
 # save the model and weights
 # JENS LET OP HIERONDER AANPASSEN
 
-model_name = 'model_dropout_0.5' #andere keer 0.75 (voor Myrthe)
+model_name = 'model_dropout_0.25' #andere keer 0.75 (voor Myrthe)
 model_filepath = model_name + '.json'
 weights_filepath = model_name + '_weights.hdf5'
 
@@ -151,5 +152,5 @@ plt.legend(['train', 'test'], loc='upper left')
 plt.show()
 
 # Save model
-
+#CHECK VOOR GOEDE PATH
 base_model.save('C:/Users//20192024//Documents//Project_BIA//BIA-group-1//8p361-project-imaging-master//Main project')
