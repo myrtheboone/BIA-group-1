@@ -39,23 +39,23 @@ def get_pcam_generators(base_dir, train_batch_size, val_batch_size=32):
       train_gen1 = datagen.flow_from_directory(train_path,
                                                target_size=(IMAGE_SIZE, IMAGE_SIZE),
                                                batch_size=train_batch_size,
-                                               class_mode='binary')
-      datagen = ImageDataGenerator(rescale=RESCALING_FACTOR,rotation_range=30,horizontal_flip=True, vertical_flip=True, fill_mode='nearest')
+                                               class_mode='binary',shuffle=False)
+      # datagen = ImageDataGenerator(rescale=RESCALING_FACTOR,rotation_range=30,horizontal_flip=True, vertical_flip=True, fill_mode='nearest')
       train_gen2 = datagen.flow_from_directory(train_path,
                                                target_size=(IMAGE_SIZE, IMAGE_SIZE),
                                                batch_size=train_batch_size,
-                                               class_mode='binary')
-      datagen = ImageDataGenerator(rescale=RESCALING_FACTOR,rotation_range=30,horizontal_flip=True, vertical_flip=True, fill_mode='nearest')
+                                               class_mode='binary',shuffle=False)
+      # datagen = ImageDataGenerator(rescale=RESCALING_FACTOR,rotation_range=30,horizontal_flip=True, vertical_flip=True, fill_mode='nearest')
       train_gen3 = datagen.flow_from_directory(train_path,
                                                target_size=(IMAGE_SIZE, IMAGE_SIZE),
                                                batch_size=train_batch_size,
-                                               class_mode='binary')
+                                               class_mode='binary',shuffle=False)
 
-      datagen = ImageDataGenerator(rescale=RESCALING_FACTOR,rotation_range=30,horizontal_flip=True, vertical_flip=True, fill_mode='nearest')
+      # datagen = ImageDataGenerator(rescale=RESCALING_FACTOR,rotation_range=30,horizontal_flip=True, vertical_flip=True, fill_mode='nearest')
       train_gen4 = datagen.flow_from_directory(train_path,
                                                target_size=(IMAGE_SIZE, IMAGE_SIZE),
                                                batch_size=train_batch_size,
-                                               class_mode='binary')
+                                               class_mode='binary',shuffle=False)
          
       
       
@@ -96,23 +96,19 @@ def get_pcam_generators2(base_dir, train_batch_size, val_batch_size=32):
  
 # get the data generators
 
-# #import an image to test the code
-#image = cv2.imread(r'C:\Users\20191819\Documents\school\2021,2022\Q3\ProjectBIA\data\train+val\train\0\19f679632eefea5cd8009a7590da89852fc23054.jpg')
+iter_size = 4 #how many times the augmentation takes place
+batch_size = 35 #size of the batches (more relevant for the model itself I think?)
 
-iter_size = 4
-batch_size = 5
-[train_gen1, train_gen2, train_gen3, train_gen4] = get_pcam_generators(r'C:\Users\20192823\Documents\3 jaar\Kwartiel 3\BIA', batch_size)  #Jim
-#train_gen1 = get_pcam_generators2(r'C:\Users\20192823\Documents\3 jaar\Kwartiel 3\BIA', batch_size)  #Jim
-#train_gen = get_pcam_generators(r'C:\Users\2019\Documents\3 jaar\kwartiel 3\Q3\ProjectBIA\data') #Lieke
+[train_gen1, train_gen2, train_gen3, train_gen4] = get_pcam_generators(r'C:\Users\20191819\Documents\school\2021,2022\Q3\ProjectBIA\data', batch_size)  #Jim
 
-for j in range(batch_size):
+#visualisation of the data augmentation
+for j in range(iter_size):
     fig, ax = plt.subplots(nrows=1, ncols=iter_size, figsize=(15,15))
-    for i in range(iter_size):
-        img = train_gen1[0][0][j]
-        ax[0].imshow(img)
-        img = train_gen2[0][0][j]
-        ax[1].imshow(img)
-        img = train_gen3[0][0][j]
-        ax[2].imshow(img)
-        img = train_gen4[0][0][j]
-        ax[3].imshow(img)
+    img = train_gen1[j][0][0]
+    ax[0].imshow(img)
+    img = train_gen2[j][0][0]
+    ax[1].imshow(img)
+    img = train_gen3[j][0][0]
+    ax[2].imshow(img)
+    img = train_gen4[j][0][0]
+    ax[3].imshow(img)
