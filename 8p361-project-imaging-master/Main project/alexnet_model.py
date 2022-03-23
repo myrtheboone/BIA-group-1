@@ -101,13 +101,12 @@ AlexNet.add(BatchNormalization())
 AlexNet.add(Dropout(0.4))
 
 #Output Layer
-AlexNet.add(Dense(10, activation = 'sigmoid'))
-AlexNet.add(BatchNormalization())
+AlexNet.add(Dense(1, activation = 'sigmoid'))
 AlexNet.compile(SGD(learning_rate=0.01, momentum=0.95), loss = 'binary_crossentropy', metrics=['accuracy'])
 
 
 
-model_name = 'model__alexnet' #andere keer 0.75 (voor Myrthe)
+model_name = 'model__alexnet_sgd_5epochs' #andere keer 0.75 (voor Myrthe)
 model_filepath = model_name + '.json'
 weights_filepath = model_name + '_weights.hdf5'
 
@@ -172,8 +171,8 @@ plot_roc_curve (fpr,tpr)
 
 print(history.history.keys())
 # summarize history for accuracy
-plt.plot(history.history['acc'])
-plt.plot(history.history['val_acc'])
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
 plt.title('model accuracy')
 plt.ylabel('accuracy')
 plt.xlabel('epoch')
