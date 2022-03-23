@@ -54,13 +54,13 @@ def get_pcam_generators(base_dir, train_batch_size=32, val_batch_size=32):
 
      return train_gen, val_gen
 
-train_gen, val_gen = get_pcam_generators('C:/Users//20192024//Documents//Project_BIA')
+train_gen, val_gen = get_pcam_generators(r"C:\TUE\8P361")
 
 
 
 base_model = Sequential()
 base_model.add(ResNet50(include_top=False, weights='imagenet', pooling='max'))
-base_model.add(Dropout(0.25))
+base_model.add(Dropout(0.50))
 base_model.add(Dense(1, activation='sigmoid'))
 # add dropout layer here
 
@@ -70,7 +70,7 @@ base_model.compile(optimizer = RMSprop(lr=0.0001), loss = 'binary_crossentropy',
 # save the model and weights
 # JENS LET OP HIERONDER AANPASSEN
 
-model_name = 'model_dropout_0.25' #andere keer 0.75 (voor Myrthe)
+model_name = 'model__dropout_0.50' #andere keer 0.75 (voor Myrthe)
 model_filepath = model_name + '.json'
 weights_filepath = model_name + '_weights.hdf5'
 
@@ -153,4 +153,5 @@ plt.show()
 
 # Save model
 #CHECK VOOR GOEDE PATH
-base_model.save('C:/Users//20192024//Documents//Project_BIA//BIA-group-1//8p361-project-imaging-master//Main project')
+base_model.save(r"C:\Users\20191974\OneDrive - TU Eindhoven\Desktop\Year 3\Q3\8P361!\BIA-group-1\8p361-project-imaging-master\Main project")
+#JENS:r"C:\Users\20191974\OneDrive - TU Eindhoven\Desktop\Year 3\Q3\8P361!\BIA-group-1\8p361-project-imaging-master\Main project"
