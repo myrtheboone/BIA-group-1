@@ -61,22 +61,27 @@ train_gen, val_gen = get_pcam_generators(r"C:\TUE\8P361")
 base_model = Sequential()
 base_model.add(ResNet50(include_top=False, weights='imagenet', pooling='max'))
 base_model.add(Dropout(0.50))
-base_model.add(Dense(1, activation='sigmoid'))
-# add dropout layer here
+#base_model.add(Dropout(0.25))
 
-base_model.compile(optimizer = RMSprop(lr=0.0001), loss = 'binary_crossentropy', metrics = ['acc'])
+base_model.add(Dense(1, activation='sigmoid'))
+
+base_model.compile(optimizer = RMSprop(lr=0.001), loss = 'binary_crossentropy', metrics = ['acc'])
 
 
 # save the model and weights
 # JENS LET OP HIERONDER AANPASSEN
 
-model_name = 'model__dropout_0.50' #andere keer 0.75 (voor Myrthe)
+
+#model_name = 'model__dropout_0.50' #andere keer 0.75 (voor Myrthe)
+
+model_name = 'model_nodropout_myrthe' #andere keer 0.75 (voor Myrthe)
+
 model_filepath = model_name + '.json'
 weights_filepath = model_name + '_weights.hdf5'
 
-model_dropout_05_json = base_model.to_json() # serialize model to JSON
+model_nodropout_json_myrthe = base_model.to_json() # serialize model to JSON
 with open(model_filepath, 'w') as json_file:
-    json_file.write(model_dropout_05_json)
+    json_file.write(model_nodropout_json_myrthe)
 
 
 # define the model checkpoint and Tensorboard callbacks
@@ -89,13 +94,13 @@ callbacks_list = [checkpoint, tensorboard]
 train_steps = train_gen.n//train_gen.batch_size
 val_steps = val_gen.n//val_gen.batch_size
 
-
+# Hoe zorgen dat het model sneller traint, steps per epoch aanpassen?
 
 
 history = base_model.fit(train_gen, steps_per_epoch=train_steps,
                     validation_data=val_gen,
                     validation_steps=val_steps,
-                    epochs=1, callbacks=callbacks_list)
+                    epochs=7, callbacks=callbacks_list)
 
 
 #Plot ROC curves of ResNet
