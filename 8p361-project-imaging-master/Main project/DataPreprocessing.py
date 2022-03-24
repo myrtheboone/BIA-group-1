@@ -104,18 +104,24 @@ batch_size = 35 #size of the batches (more relevant for the model itself I think
 #[train_gen1, train_gen2, train_gen3, train_gen4] = get_pcam_generators(r'C:\Users\20192823\Documents\3 jaar\Kwartiel 3\BIA', batch_size)  #Jim
 #first 9000 of training set (0) last 9000 of training set (1)
 #validation set remains the same
-
+#%% 
 #visualisation of the data augmentation
 for j in range(iter_size):
     fig, ax = plt.subplots(nrows=1, ncols=iter_size, figsize=(15,15))
+    ax[0].axis('off')
     img = train_gen1[j][0][0]
     ax[0].imshow(img)
+    ax[0].axis('off')
     img = train_gen2[j][0][0]
     ax[1].imshow(img)
+    ax[1].axis('off')
     img = train_gen3[j][0][0]
     ax[2].imshow(img)
+    ax[2].axis('off')
     img = train_gen4[j][0][0]
     ax[3].imshow(img)
+    ax[3].axis('off')
+
 
 #%% 
 list_a = []
