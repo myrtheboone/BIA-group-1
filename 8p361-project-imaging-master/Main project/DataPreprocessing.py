@@ -18,6 +18,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 #from tensorflow.keras.optimizers import SGD
 #from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
 import matplotlib.pyplot as plt
+
 # unused for now, to be used for ROC analysis
 #from sklearn.metrics import roc_curve, auc
 #import cv2
@@ -99,8 +100,8 @@ def get_pcam_generators2(base_dir, train_batch_size, val_batch_size=32):
 iter_size = 4 #how many times the augmentation takes place
 batch_size = 35 #size of the batches (more relevant for the model itself I think?)
 
-#[train_gen1, train_gen2, train_gen3, train_gen4] = get_pcam_generators(r'C:\Users\20191819\Documents\school\2021,2022\Q3\ProjectBIA\data', batch_size)  #Lieke
-[train_gen1, train_gen2, train_gen3, train_gen4] = get_pcam_generators(r'C:\Users\20192823\Documents\3 jaar\Kwartiel 3\BIA', batch_size)  #Jim
+[train_gen1, train_gen2, train_gen3, train_gen4] = get_pcam_generators(r'C:\Users\20191819\Documents\school\2021,2022\Q3\ProjectBIA\data', batch_size)  #Lieke
+#[train_gen1, train_gen2, train_gen3, train_gen4] = get_pcam_generators(r'C:\Users\20192823\Documents\3 jaar\Kwartiel 3\BIA', batch_size)  #Jim
 #first 9000 of training set (0) last 9000 of training set (1)
 #validation set remains the same
 
@@ -115,3 +116,8 @@ for j in range(iter_size):
     ax[2].imshow(img)
     img = train_gen4[j][0][0]
     ax[3].imshow(img)
+
+#%% 
+list_a = []
+for i in range(10):
+    list_a.append(train_gen1[i])
