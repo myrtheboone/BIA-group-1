@@ -7,16 +7,16 @@ Created on Thu Mar 17 15:37:27 2022
 # imprting libraries
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}   
-import tensorflow as tf
+# import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Flatten, RandomFlip, RandomRotation
-from tensorflow.keras.layers import Conv2D, MaxPool2D
-from tensorflow.keras.optimizers import SGD
-from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
+# from tensorflow.keras.models import Sequential
+# from tensorflow.keras.layers import Dense, Flatten, RandomFlip, RandomRotation
+# from tensorflow.keras.layers import Conv2D, MaxPool2D
+# from tensorflow.keras.optimizers import SGD
+# from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.metrics import roc_curve, auc
+# from sklearn.metrics import roc_curve, auc
 
 # the size of the images in the PCAM dataset
 IMAGE_SIZE = 96
@@ -31,13 +31,15 @@ def get_pcam_generators(base_dir, train_batch_size, val_batch_size=32):
 
       RESCALING_FACTOR = 1./255
 
-      # instantiate data generators
-      datagen = ImageDataGenerator(rescale=RESCALING_FACTOR,rotation_range=30,horizontal_flip=True, vertical_flip=True, fill_mode='nearest')
+      # instantiate data generators original data set
+      datagen = ImageDataGenerator(rescale=RESCALING_FACTOR)
       train_gen1 = datagen.flow_from_directory(train_path,
                                                target_size=(IMAGE_SIZE, IMAGE_SIZE),
                                                batch_size=train_batch_size,
                                                class_mode='binary',shuffle=False)
-      # datagen = ImageDataGenerator(rescale=RESCALING_FACTOR,rotation_range=30,horizontal_flip=True, vertical_flip=True, fill_mode='nearest')
+      
+      # instantiate data generators augmented data set
+      datagen = ImageDataGenerator(rescale=RESCALING_FACTOR,rotation_range=90,horizontal_flip=True, vertical_flip=True, fill_mode='nearest')
       train_gen2 = datagen.flow_from_directory(train_path,
                                                target_size=(IMAGE_SIZE, IMAGE_SIZE),
                                                batch_size=train_batch_size,
@@ -98,75 +100,97 @@ train_gen = train_gen1
 
 #%% creating the 1/4 data set
 
-#create a list to store 1/4 of the images
+#create a list to store 1/4 of the images with half label 0 and half label 1
 list_train_gen_1_4 = []
-list_train_gen_1_4.append(train_gen1[0])
-list_train_gen_1_4.append(train_gen1[15])
-list_train_gen_1_4.append(train_gen1[1])
-list_train_gen_1_4.append(train_gen1[14])
+list_train_gen_1_4.append(train_gen1[0]) #label 0
+list_train_gen_1_4.append(train_gen1[15]) #label 1
+list_train_gen_1_4.append(train_gen1[1]) #label 0 
+list_train_gen_1_4.append(train_gen1[14]) #label 1
 
-#retrieve an array with the images
-train_gen_1_4_img = list_train_gen_1_4[:][0][0]
-np.append(train_gen_1_4_img, list_train_gen_1_4[:][1][0])
-np.append(train_gen_1_4_img, list_train_gen_1_4[:][2][0])
-np.append(train_gen_1_4_img, list_train_gen_1_4[:][3][0])
+#retrieve a list with the images
+train_gen_1_4_img = []
 
-#retrieve an array with the labels
-train_gen_1_4_lab = list_train_gen_1_4[:][0][1]
-np.append(train_gen_1_4_lab, list_train_gen_1_4[:][1][1])
-np.append(train_gen_1_4_lab, list_train_gen_1_4[:][2][1])
-np.append(train_gen_1_4_lab, list_train_gen_1_4[:][3][1])
+#retrieve a list with the labels
+train_gen_1_4_lab = []
+
+batch_size = 9000 #the size of the batches
+
+#looping over all the images
+for i in range(4):
+    for j in range(batch_size):
+        #append the images to the list
+        train_gen_1_4_img.append(list_train_gen_1_4[i][0][j])
+
+        #append the labels to the list
+        train_gen_1_4_lab.append(list_train_gen_1_4[i][1][j])
 
 #create a data generator function
 datagen = ImageDataGenerator()
 
 #defining the batch size
-batch_size = 8
+batch_size = 32
+
+#creating an array that can be put into the flow  function
+train_data_1_4_img = np.array(train_gen_1_4_img, dtype="float")
 
 #creating the final 1/4 data generator
-train_gen_1_4 = datagen.flow(train_gen_1_4_img, train_gen_1_4_lab, batch_size=batch_size,shuffle=True)
+train_gen_1_4 = datagen.flow(train_data_1_4_img, train_gen_1_4_lab, batch_size=batch_size,shuffle=True)
 
 #%% creating the augmented data set
 
 #create a list to store the augmented images
 list_train_gen_aug = []
+
+#appending one fourth of the original data set
 list_train_gen_aug.append(train_gen1[0])
 list_train_gen_aug.append(train_gen1[15])
 list_train_gen_aug.append(train_gen1[1])
 list_train_gen_aug.append(train_gen1[14])
 
+#appending one fourth of the augmented data
 list_train_gen_aug.append(train_gen2[0])
 list_train_gen_aug.append(train_gen2[15])
 list_train_gen_aug.append(train_gen2[1])
 list_train_gen_aug.append(train_gen2[14])
 
+#appending one fourth of the augmented data
 list_train_gen_aug.append(train_gen3[0])
 list_train_gen_aug.append(train_gen3[15])
 list_train_gen_aug.append(train_gen3[1])
 list_train_gen_aug.append(train_gen3[14])
 
+#appending one fourth of the augmented data
 list_train_gen_aug.append(train_gen4[0])
 list_train_gen_aug.append(train_gen4[15])
 list_train_gen_aug.append(train_gen4[1])
 list_train_gen_aug.append(train_gen4[14])
 
-#retrieve an array with the images
-train_gen_aug_img = list_train_gen_aug[:][0][0]
-np.append(train_gen_aug_img, list_train_gen_aug[:][1][0])
-np.append(train_gen_aug_img, list_train_gen_aug[:][2][0])
-np.append(train_gen_aug_img, list_train_gen_aug[:][3][0])
+#retrieve a list with the images
+train_gen_aug_img = []
 
-#retrieve an array with the labels
-train_gen_aug_lab = list_train_gen_aug[:][0][1]
-np.append(train_gen_aug_lab, list_train_gen_aug[:][1][1])
-np.append(train_gen_aug_lab, list_train_gen_aug[:][2][1])
-np.append(train_gen_aug_lab, list_train_gen_aug[:][3][1])
+#retrieve a list with the labels
+train_gen_aug_lab = []
+
+batch_size = 9000 #the size of the batches
+
+#looping over all the images
+for i in range(16):
+    for j in range(batch_size):
+        #appending the images to the list
+        train_gen_aug_img.append(list_train_gen_aug[i][0][j])
+        
+        #appending the labels to the list
+        train_gen_aug_lab.append(list_train_gen_aug[i][0][j])
+
 
 #create a data generator function
 datagen = ImageDataGenerator()
 
+#creating an array that can be put into the flow  function
+train_data_aug_img = np.array(train_gen_aug_img, dtype="float")
+
 #defining the batch size
-batch_size = 8
+batch_size = 32
 
 #creating the final 1/4 data generator
-train_gen_aug = datagen.flow(train_gen_aug_img, train_gen_aug_lab, batch_size=batch_size,shuffle=True)
+train_gen_aug = datagen.flow(train_data_aug_img, train_gen_aug_lab, batch_size=batch_size,shuffle=True)
