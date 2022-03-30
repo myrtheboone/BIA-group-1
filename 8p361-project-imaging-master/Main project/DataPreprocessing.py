@@ -41,7 +41,7 @@ def get_pcam_generators(base_dir, train_batch_size=32, val_batch_size=32):
       val_gen = datagen.flow_from_directory(valid_path,
                                               target_size=(IMAGE_SIZE, IMAGE_SIZE),
                                               batch_size=val_batch_size,
-                                              class_mode='binary') 
+                                              class_mode='binary',shuffle=False) 
 
   
       return train_gen1, val_gen
@@ -102,7 +102,7 @@ def get_pcam_generators_1_4(base_dir, train_batch_size=9000, val_batch_size=32):
       val_gen = datagen.flow_from_directory(valid_path,
                                               target_size=(IMAGE_SIZE, IMAGE_SIZE),
                                               batch_size=val_batch_size,
-                                              class_mode='binary') 
+                                              class_mode='binary',shuffle=False) 
   
       return train_gen_1_4, val_gen
   
@@ -143,7 +143,7 @@ def get_pcam_generators_aug(base_dir, train_batch_size=9000, val_batch_size=32):
       val_gen = datagen.flow_from_directory(valid_path,
                                               target_size=(IMAGE_SIZE, IMAGE_SIZE),
                                               batch_size=val_batch_size,
-                                              class_mode='binary')
+                                              class_mode='binary',shuffle=False)
 
       #create a list to store the augmented images
       list_train_gen_aug = []
@@ -205,10 +205,9 @@ def get_pcam_generators_aug(base_dir, train_batch_size=9000, val_batch_size=32):
   
       return train_gen_aug, val_gen  
   
-def visualize_aug(base_dir, train_batch_size=9000, val_batch_size=32):
+def visualize_aug(base_dir, train_batch_size=9000):
       # dataset parameters
       train_path = os.path.join(base_dir, 'train+val', 'train')
-      valid_path = os.path.join(base_dir, 'train+val', 'valid')
 
 
       RESCALING_FACTOR = 1./255 #the rescaling factor
@@ -237,12 +236,6 @@ def visualize_aug(base_dir, train_batch_size=9000, val_batch_size=32):
                                                target_size=(IMAGE_SIZE, IMAGE_SIZE),
                                                batch_size=train_batch_size,
                                                class_mode='binary',shuffle=False)
-      
-      datagen = ImageDataGenerator(rescale=RESCALING_FACTOR)
-      val_gen = datagen.flow_from_directory(valid_path,
-                                              target_size=(IMAGE_SIZE, IMAGE_SIZE),
-                                              batch_size=val_batch_size,
-                                              class_mode='binary') 
       
       #visualisation of the data augmentation
       iter_size = 4 #how many times the augmentation takes place
@@ -277,120 +270,123 @@ def visualize_aug(base_dir, train_batch_size=9000, val_batch_size=32):
 
 [train_gen_aug, val_gen] = get_pcam_generators_aug(r'C:\Users\20191819\Documents\school\2021,2022\Q3\ProjectBIA\data')
 
-#%% creating the 1/4 data set
+#%% visualize the data augmentation
 
-#create a list to store 1/4 of the images with half label 0 and half label 1
-list_train_gen_1_4 = []
-list_train_gen_1_4.append(train_gen1[0]) #label 0
-list_train_gen_1_4.append(train_gen1[15]) #label 1
-list_train_gen_1_4.append(train_gen1[1]) #label 0 
-list_train_gen_1_4.append(train_gen1[14]) #label 1
+visualize_aug(r'C:\Users\20191819\Documents\school\2021,2022\Q3\ProjectBIA\data')
+# #%% creating the 1/4 data set
 
-#retrieve a list with the images
-train_gen_1_4_img = []
+# #create a list to store 1/4 of the images with half label 0 and half label 1
+# list_train_gen_1_4 = []
+# list_train_gen_1_4.append(train_gen1[0]) #label 0
+# list_train_gen_1_4.append(train_gen1[15]) #label 1
+# list_train_gen_1_4.append(train_gen1[1]) #label 0 
+# list_train_gen_1_4.append(train_gen1[14]) #label 1
 
-#retrieve a list with the labels
-train_gen_1_4_lab = []
+# #retrieve a list with the images
+# train_gen_1_4_img = []
 
-batch_size = 9000 #the size of the batches
+# #retrieve a list with the labels
+# train_gen_1_4_lab = []
 
-#looping over all the images
-for i in range(4):
-    for j in range(batch_size):
-        #append the images to the list
-        train_gen_1_4_img.append(list_train_gen_1_4[i][0][j])
+# batch_size = 9000 #the size of the batches
 
-        #append the labels to the list
-        train_gen_1_4_lab.append(list_train_gen_1_4[i][1][j])
+# #looping over all the images
+# for i in range(4):
+#     for j in range(batch_size):
+#         #append the images to the list
+#         train_gen_1_4_img.append(list_train_gen_1_4[i][0][j])
 
-#create a data generator function
-datagen = ImageDataGenerator()
+#         #append the labels to the list
+#         train_gen_1_4_lab.append(list_train_gen_1_4[i][1][j])
 
-#defining the batch size
-batch_size = 32
+# #create a data generator function
+# datagen = ImageDataGenerator()
 
-#creating an array that can be put into the flow  function
-train_data_1_4_img = np.array(train_gen_1_4_img, dtype="float")
+# #defining the batch size
+# batch_size = 32
 
-#creating the final 1/4 data generator
-train_gen_1_4 = datagen.flow(train_data_1_4_img, train_gen_1_4_lab, batch_size=batch_size,shuffle=True)
+# #creating an array that can be put into the flow  function
+# train_data_1_4_img = np.array(train_gen_1_4_img, dtype="float")
 
-#%% Visualizing the data augmentation (4 example plots)
+# #creating the final 1/4 data generator
+# train_gen_1_4 = datagen.flow(train_data_1_4_img, train_gen_1_4_lab, batch_size=batch_size,shuffle=True)
 
-#visualisation of the data augmentation
-iter_size = 4 #how many times the augmentation takes place
+# #%% Visualizing the data augmentation (4 example plots)
 
-for j in range(iter_size):
-    fig, ax = plt.subplots(nrows=1, ncols=iter_size, figsize=(15,15))
-    ax[0].axis('off')
-    img = train_gen1[j][0][0]
-    ax[0].imshow(img)
-    ax[0].axis('off')
-    img = train_gen2[j][0][0]
-    ax[1].imshow(img)
-    ax[1].axis('off')
-    img = train_gen3[j][0][0]
-    ax[2].imshow(img)
-    ax[2].axis('off')
-    img = train_gen4[j][0][0]
-    ax[3].imshow(img)
-    ax[3].axis('off')
+# #visualisation of the data augmentation
+# iter_size = 4 #how many times the augmentation takes place
 
-#%% creating the augmented data set
+# for j in range(iter_size):
+#     fig, ax = plt.subplots(nrows=1, ncols=iter_size, figsize=(15,15))
+#     ax[0].axis('off')
+#     img = train_gen1[j][0][0]
+#     ax[0].imshow(img)
+#     ax[0].axis('off')
+#     img = train_gen2[j][0][0]
+#     ax[1].imshow(img)
+#     ax[1].axis('off')
+#     img = train_gen3[j][0][0]
+#     ax[2].imshow(img)
+#     ax[2].axis('off')
+#     img = train_gen4[j][0][0]
+#     ax[3].imshow(img)
+#     ax[3].axis('off')
 
-#create a list to store the augmented images
-list_train_gen_aug = []
+# #%% creating the augmented data set
 
-#appending one fourth of the original data set
-list_train_gen_aug.append(train_gen1[0])
-list_train_gen_aug.append(train_gen1[15])
-list_train_gen_aug.append(train_gen1[1])
-list_train_gen_aug.append(train_gen1[14])
+# #create a list to store the augmented images
+# list_train_gen_aug = []
 
-#appending one fourth of the augmented data
-list_train_gen_aug.append(train_gen2[0])
-list_train_gen_aug.append(train_gen2[15])
-list_train_gen_aug.append(train_gen2[1])
-list_train_gen_aug.append(train_gen2[14])
+# #appending one fourth of the original data set
+# list_train_gen_aug.append(train_gen1[0])
+# list_train_gen_aug.append(train_gen1[15])
+# list_train_gen_aug.append(train_gen1[1])
+# list_train_gen_aug.append(train_gen1[14])
 
-#appending one fourth of the augmented data
-list_train_gen_aug.append(train_gen3[0])
-list_train_gen_aug.append(train_gen3[15])
-list_train_gen_aug.append(train_gen3[1])
-list_train_gen_aug.append(train_gen3[14])
+# #appending one fourth of the augmented data
+# list_train_gen_aug.append(train_gen2[0])
+# list_train_gen_aug.append(train_gen2[15])
+# list_train_gen_aug.append(train_gen2[1])
+# list_train_gen_aug.append(train_gen2[14])
 
-#appending one fourth of the augmented data
-list_train_gen_aug.append(train_gen4[0])
-list_train_gen_aug.append(train_gen4[15])
-list_train_gen_aug.append(train_gen4[1])
-list_train_gen_aug.append(train_gen4[14])
+# #appending one fourth of the augmented data
+# list_train_gen_aug.append(train_gen3[0])
+# list_train_gen_aug.append(train_gen3[15])
+# list_train_gen_aug.append(train_gen3[1])
+# list_train_gen_aug.append(train_gen3[14])
 
-#retrieve a list with the images
-train_gen_aug_img = []
+# #appending one fourth of the augmented data
+# list_train_gen_aug.append(train_gen4[0])
+# list_train_gen_aug.append(train_gen4[15])
+# list_train_gen_aug.append(train_gen4[1])
+# list_train_gen_aug.append(train_gen4[14])
 
-#retrieve a list with the labels
-train_gen_aug_lab = []
+# #retrieve a list with the images
+# train_gen_aug_img = []
 
-batch_size = 9000 #the size of the batches
+# #retrieve a list with the labels
+# train_gen_aug_lab = []
 
-#looping over all the images
-for i in range(16):
-    for j in range(batch_size):
-        #appending the images to the list
-        train_gen_aug_img.append(list_train_gen_aug[i][0][j])
+# batch_size = 9000 #the size of the batches
+
+# #looping over all the images
+# for i in range(16):
+#     for j in range(batch_size):
+#         #appending the images to the list
+#         train_gen_aug_img.append(list_train_gen_aug[i][0][j])
         
-        #appending the labels to the list
-        train_gen_aug_lab.append(list_train_gen_aug[i][0][j])
+#         #appending the labels to the list
+#         train_gen_aug_lab.append(list_train_gen_aug[i][0][j])
 
 
-#create a data generator function
-datagen = ImageDataGenerator()
+# #create a data generator function
+# datagen = ImageDataGenerator()
 
-#creating an array that can be put into the flow  function
-train_data_aug_img = np.array(train_gen_aug_img, dtype="float")
+# #creating an array that can be put into the flow  function
+# train_data_aug_img = np.array(train_gen_aug_img, dtype="float")
 
-#defining the batch size
-batch_size = 32
+# #defining the batch size
+# batch_size = 32
 
-#creating the final 1/4 data generator
-train_gen_aug = datagen.flow(train_data_aug_img, train_gen_aug_lab, batch_size=batch_size,shuffle=True)
+# #creating the final 1/4 data generator
+# train_gen_aug = datagen.flow(train_data_aug_img, train_gen_aug_lab, batch_size=batch_size,shuffle=True)
