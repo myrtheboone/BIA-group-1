@@ -17,12 +17,17 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Flatten, Dropout, MaxPooling2D, Conv2D,BatchNormalization
 from tensorflow.keras.layers import Conv2D, MaxPool2D
-from tensorflow.keras.optimizers import SGD
+from tensorflow.keras.optimizers import SGD, Adam
 #from keras.layers.normalization import BatchNormalization
 from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
 import matplotlib.pyplot as plt
 
 from sklearn.metrics import roc_curve, auc
+
+#Import libraries necessary for hyperparameter tuning
+
+from keras_tuner import HyperParameters
+import keras_tuner as kt
 
 
 IMAGE_SIZE = 96
@@ -43,7 +48,7 @@ def get_pcam_generators(base_dir, train_batch_size=32, val_batch_size=32):
      train_gen = datagen.flow_from_directory(train_path,
                                              target_size=(IMAGE_SIZE, IMAGE_SIZE),
                                              batch_size=train_batch_size,
-                                             class_mode='binary', shuffle = False)
+                                             class_mode='binary')
 
      val_gen = datagen.flow_from_directory(valid_path,
                                              target_size=(IMAGE_SIZE, IMAGE_SIZE),
@@ -52,7 +57,10 @@ def get_pcam_generators(base_dir, train_batch_size=32, val_batch_size=32):
 
      return train_gen, val_gen
 
-train_gen, val_gen = get_pcam_generators(r"C:\TUE\8P361")
+train_gen, val_gen = get_pcam_generators('C:/Users//20192024//Documents//Project_BIA')
+
+
+
 
 #Instantiation
 AlexNet = Sequential()
@@ -86,27 +94,28 @@ AlexNet.add(Flatten())
 AlexNet.add(Dense(4096, activation = 'relu', input_shape = (IMAGE_SIZE, IMAGE_SIZE, 3)))
 AlexNet.add(BatchNormalization())
 # Add Dropout to prevent overfitting
-AlexNet.add(Dropout(0.4))
+AlexNet.add(Dropout(0.2))
 
 #2nd Fully Connected Layer
 AlexNet.add(Dense(4096, activation = 'relu'))
 AlexNet.add(BatchNormalization())
 #Add Dropout
-AlexNet.add(Dropout(0.4))
+AlexNet.add(Dropout(0.2))
 
 #3rd Fully Connected Layer
 AlexNet.add(Dense(1000, activation = 'relu'))
 AlexNet.add(BatchNormalization())
 #Add Dropout
-AlexNet.add(Dropout(0.4))
+AlexNet.add(Dropout(0.2))
 
 #Output Layer
 AlexNet.add(Dense(1, activation = 'sigmoid'))
-AlexNet.compile(SGD(learning_rate=0.01, momentum=0.95), loss = 'binary_crossentropy', metrics=['accuracy'])
+opt = SGD(learning_rate=0.01, momentum=0.95) #Adam already uses some type of momentum so we do not have to specify it 
+AlexNet.compile(opt, loss = 'binary_crossentropy', metrics=['accuracy'])
 
 
 
-model_name = 'model__alexnet_sgd_5epochs' #andere keer 0.75 (voor Myrthe)
+model_name = 'model__alexnet_SGD_dropout02_30epochs' #andere keer 0.75 (voor Myrthe)
 model_filepath = model_name + '.json'
 weights_filepath = model_name + '_weights.hdf5'
 
@@ -131,7 +140,7 @@ val_steps = val_gen.n//val_gen.batch_size
 history = AlexNet.fit(train_gen, steps_per_epoch=train_steps,
                     validation_data=val_gen,
                     validation_steps=val_steps,
-                    epochs=5, callbacks=callbacks_list)
+                    epochs=30, callbacks=callbacks_list)
 
 
 #Plot ROC curves of ResNet
@@ -159,7 +168,7 @@ def plot_roc_curve(fpr,tpr):
   plt.axis([0,1,0,1]) 
   plt.xlabel('False Positive Rate') 
   plt.ylabel('True Positive Rate') 
-  plt.title('ROC curve - model with dense layers')
+  plt.title('ROC curve - AlexNet (DropOut 0.2, SGD)')
   plt.legend(loc='lower right')
   plt.show()    
   
@@ -171,23 +180,24 @@ plot_roc_curve (fpr,tpr)
 
 print(history.history.keys())
 # summarize history for accuracy
-plt.plot(history.history['accuracy'])
-plt.plot(history.history['val_accuracy'])
-plt.title('model accuracy')
+range_epochs = np.arange(1,31,1)
+
+plt.ylim([0,1])
+plt.plot(range_epochs, history.history['accuracy'])
+plt.plot(range_epochs, history.history['val_accuracy'])
+plt.title('AlexNet (DropOut 0.2, SGD) accuracy')
 plt.ylabel('accuracy')
 plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
-plt.show()
-# summarize history for loss
-plt.plot(history.history['loss'])
-plt.plot(history.history['val_loss'])
-plt.title('model loss')
-plt.ylabel('loss')
-plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
+plt.legend(['train', 'validation'], loc='upper left')
 plt.show()
 
-# Save model
-#CHECK VOOR GOEDE PATH
-AlexNet.save(r"C:\Users\20191974\OneDrive - TU Eindhoven\Desktop\Year 3\Q3\8P361!\BIA-group-1\8p361-project-imaging-master\Main project")
-#JENS:r"C:\Users\20191974\OneDrive - TU Eindhoven\Desktop\Year 3\Q3\8P361!\BIA-group-1\8p361-project-imaging-master\Main project"
+# summarize history for loss
+plt.plot(range_epochs, history.history['loss'])
+plt.plot(range_epochs, history.history['val_loss'])
+plt.title('AlexNet (DropOut 0.2, SGD) loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'validation'], loc='upper left')
+plt.show()
+
+AlexNet.save(r"C:\Users\20191974\OneDrive - TU Eindhoven\Desktop\Year 3\Q3\8P361!\BIA-group-1\8p361-project-imaging-master\Main project\AlexNet_SGD_30_drop02")
