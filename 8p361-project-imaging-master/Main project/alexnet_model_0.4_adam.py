@@ -110,7 +110,7 @@ AlexNet.add(Dropout(0.4))
 
 #Output Layer
 AlexNet.add(Dense(1, activation = 'sigmoid'))
-opt = Adam(learning_rate=0.01, momentum=0.95) #Adam already uses some type of momentum so we do not have to specify it 
+opt = Adam(learning_rate=0.01) #Adam already uses some type of momentum so we do not have to specify it 
 AlexNet.compile(opt, loss = 'binary_crossentropy', metrics=['accuracy'])
 
 
