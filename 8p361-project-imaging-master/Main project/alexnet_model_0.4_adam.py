@@ -110,12 +110,12 @@ AlexNet.add(Dropout(0.4))
 
 #Output Layer
 AlexNet.add(Dense(1, activation = 'sigmoid'))
-opt = SGD(learning_rate=0.01, momentum=0.95) #Adam already uses some type of momentum so we do not have to specify it 
+opt = Adam(learning_rate=0.01, momentum=0.95) #Adam already uses some type of momentum so we do not have to specify it 
 AlexNet.compile(opt, loss = 'binary_crossentropy', metrics=['accuracy'])
 
 
 
-model_name = 'model__alexnet_SGD_dropout04_30epochs_adam' #andere keer 0.75 (voor Myrthe)
+model_name = 'model__alexnet_dropout04_30epochs_adam' #andere keer 0.75 (voor Myrthe)
 model_filepath = model_name + '.json'
 weights_filepath = model_name + '_weights.hdf5'
 
