@@ -109,7 +109,7 @@ val_steps = val_gen.n//val_gen.batch_size
 history = model.fit(train_gen, steps_per_epoch=train_steps,
                     validation_data=val_gen,
                     validation_steps=val_steps,
-                    epochs=3,
+                    epochs=10,
                     callbacks=callbacks_list)
 
 # ROC analysis
@@ -141,3 +141,24 @@ def plot_roc_curve(fpr,tpr):
   
 plot_roc_curve (fpr,tpr) 
 auc_score = auc(fpr, tpr)
+
+
+# Plot accuracy and loss curves of ResNet from model history
+
+print(history.history.keys())
+# summarize history for accuracy
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()
+# summarize history for loss
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()
