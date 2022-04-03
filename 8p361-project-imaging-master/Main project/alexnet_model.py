@@ -10,6 +10,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
 import tensorflow as tf
 
 import numpy as np
+from visualisations_BIA import *
 
 
 
@@ -17,10 +18,11 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Flatten, Dropout, MaxPooling2D, Conv2D,BatchNormalization
 from tensorflow.keras.layers import Conv2D, MaxPool2D
-from tensorflow.keras.optimizers import SGD
-#from keras.layers.normalization import BatchNormalization
+from tensorflow.keras.optimizers import SGD, Adam
 from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
 import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
 
 from sklearn.metrics import roc_curve, auc
 
@@ -39,7 +41,6 @@ def get_pcam_generators(base_dir, train_batch_size=32, val_batch_size=32):
      train_path = os.path.join(base_dir, 'train+val', 'train')
      valid_path = os.path.join(base_dir, 'train+val', 'valid')
 
-
      RESCALING_FACTOR = 1./255
 
      # instantiate data generators
@@ -54,6 +55,8 @@ def get_pcam_generators(base_dir, train_batch_size=32, val_batch_size=32):
                                              target_size=(IMAGE_SIZE, IMAGE_SIZE),
                                              batch_size=val_batch_size,
                                              class_mode='binary', shuffle = False) 
+     
+    
 
      return train_gen, val_gen
 
@@ -94,27 +97,28 @@ AlexNet.add(Flatten())
 AlexNet.add(Dense(4096, activation = 'relu', input_shape = (IMAGE_SIZE, IMAGE_SIZE, 3)))
 AlexNet.add(BatchNormalization())
 # Add Dropout to prevent overfitting
-#AlexNet.add(Dropout(0.4))
+AlexNet.add(Dropout(0.2))
 
 #2nd Fully Connected Layer
 AlexNet.add(Dense(4096, activation = 'relu'))
 AlexNet.add(BatchNormalization())
 #Add Dropout
-#AlexNet.add(Dropout(0.4))
+AlexNet.add(Dropout(0.2))
 
 #3rd Fully Connected Layer
 AlexNet.add(Dense(1000, activation = 'relu'))
 AlexNet.add(BatchNormalization())
 #Add Dropout
-#AlexNet.add(Dropout(0.4))
+AlexNet.add(Dropout(0.2))
 
 #Output Layer
 AlexNet.add(Dense(1, activation = 'sigmoid'))
-AlexNet.compile(SGD(learning_rate=0.01, momentum=0.95), loss = 'binary_crossentropy', metrics=['accuracy'])
+opt = SGD(learning_rate=0.01, momentum=0.95) #Adam already uses some type of momentum so we do not have to specify it 
+AlexNet.compile(opt, loss = 'binary_crossentropy', metrics=['accuracy'])
 
 
 
-model_name = 'model__alexnet_sgd_20epochs' #andere keer 0.75 (voor Myrthe)
+model_name = 'model__alexnet_SGD_clownings' 
 model_filepath = model_name + '.json'
 weights_filepath = model_name + '_weights.hdf5'
 
@@ -139,9 +143,15 @@ val_steps = val_gen.n//val_gen.batch_size
 history = AlexNet.fit(train_gen, steps_per_epoch=train_steps,
                     validation_data=val_gen,
                     validation_steps=val_steps,
+                    epochs=30, callbacks=callbacks_list)
 
 
-#Plot ROC curves of ResNet
+# Plotting the accuracy and loss curves of validation and training set
+
+accuracy_loss_curves(history, 30)
+
+
+# Predict on validation set with AlexNet
 
 val_prob = AlexNet.predict(val_gen)
 filenames=val_gen.filenames
@@ -160,36 +170,21 @@ val_true_array = val_true_array.reshape(16000,1)
 
 fpr , tpr , thresholds = roc_curve(val_true_labels, val_prob)
 auc_score = auc(fpr, tpr)
+plot_roc_curve(fpr,tpr, auc_score, 'ROC curve - AlexNet (DropOut 0.2, SGD)') 
 
-def plot_roc_curve(fpr,tpr): 
-  plt.plot(fpr,tpr, label="ROC curve (area = {0:0.2f})".format(auc_score)) 
-  plt.axis([0,1,0,1]) 
-  plt.xlabel('False Positive Rate') 
-  plt.ylabel('True Positive Rate') 
-  plt.title('ROC curve - AlexNet (no DropOut)')
-  plt.legend(loc='lower right')
-  plt.show()    
-  
-plot_roc_curve (fpr,tpr) 
+# Plotting the confusion matrix
 
+heatmap_confusion(AlexNet, val_true_array, val_prob_array)
 
+# Let the model predict on the test set
 
-# Plot accuracy and loss curves of ResNet from model history
+test_path = os.path.join('C:/Users//20192024//Documents//Project_BIA', 'test', 'test')
+RESCALING_FACTOR = 1./255
 
-print(history.history.keys())
-# summarize history for accuracy
-plt.plot(history.history['accuracy'])
-plt.plot(history.history['val_accuracy'])
-plt.title('AlexNet (no DropOut) accuracy')
-plt.ylabel('accuracy')
-plt.xlabel('epoch')
-plt.legend(['train', 'validation'], loc='upper left')
-plt.show()
-# summarize history for loss
-plt.plot(history.history['loss'])
-plt.plot(history.history['val_loss'])
-plt.title('AlexNet (no DropOut) loss')
-plt.ylabel('loss')
-plt.xlabel('epoch')
-plt.legend(['train', 'validation'], loc='upper left')
-plt.show()
+# instantiate data generators
+datagen = ImageDataGenerator(rescale=RESCALING_FACTOR)
+
+test_gen = datagen.flow_from_directory(test_path,
+                                        target_size=(IMAGE_SIZE, IMAGE_SIZE),
+                                        class_mode='binary')
+test_prob = AlexNet.predict(test_gen)

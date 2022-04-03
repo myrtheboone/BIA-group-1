@@ -18,8 +18,8 @@ from tensorflow.keras.models import model_from_json
 
 #Change these variables to point at the locations and names of the test dataset and your models.
 TEST_PATH = 'C://Users//20192024//Documents//Project_BIA//test//test//' 
-MODEL_FILEPATH = 'C://Users//20192024//Documents//Project_BIA//BIA-group-1//8p361-project-imaging-master//code//model_fully_conv.json' 
-MODEL_WEIGHTS_FILEPATH = 'C://Users//20192024//Documents//Project_BIA//BIA-group-1//8p361-project-imaging-master//code//model_fully_conv_weights.hdf5'
+MODEL_FILEPATH = 'C://Users//20192024//Documents//Project_BIA//BIA-group-1//8p361-project-imaging-master//Main project//model__alexnet_SGD_dropout02_20epochs.json' 
+MODEL_WEIGHTS_FILEPATH = 'C://Users//20192024//Documents//Project_BIA//BIA-group-1//8p361-project-imaging-master//Main project//model__alexnet_SGD_dropout02_20epochs_weights.hdf5'
 
 # load model and model weights
 json_file = open(MODEL_FILEPATH, 'r')
