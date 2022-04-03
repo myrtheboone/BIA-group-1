@@ -187,7 +187,7 @@ def get_pcam_generators_aug(base_dir, train_batch_size=9000, val_batch_size=32):
               train_gen_aug_img.append(list_train_gen_aug[i][0][j])
         
               #appending the labels to the list
-              train_gen_aug_lab.append(list_train_gen_aug[i][0][j])
+              train_gen_aug_lab.append(list_train_gen_aug[i][1][j])
 
 
       #create a data generator function
