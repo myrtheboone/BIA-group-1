@@ -10,9 +10,6 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
 import tensorflow as tf
 
 import numpy as np
-
-
-
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Flatten, Dropout, MaxPooling2D, Conv2D,BatchNormalization
@@ -33,32 +30,65 @@ import keras_tuner as kt
 
 IMAGE_SIZE = 96
 
-
-# def get_pcam_generators(base_dir, train_batch_size=32, val_batch_size=32):
-
-#      # dataset parameters
-#      train_path = os.path.join(base_dir, 'train+val', 'train')
-#      valid_path = os.path.join(base_dir, 'train+val', 'valid')
+def get_pcam_generators_1_4(base_dir, train_batch_size=9000, val_batch_size=32):
+      # dataset parameters
+      train_path = os.path.join(base_dir, 'train+val', 'train')
+      valid_path = os.path.join(base_dir, 'train+val', 'valid')
 
 
-#      RESCALING_FACTOR = 1./255
+      RESCALING_FACTOR = 1./255
 
-#      # instantiate data generators
-#      datagen = ImageDataGenerator(rescale=RESCALING_FACTOR)
+      # instantiate data generators original data set
+      datagen = ImageDataGenerator(rescale=RESCALING_FACTOR)
+      train_gen1 = datagen.flow_from_directory(train_path,
+                                               target_size=(IMAGE_SIZE, IMAGE_SIZE),
+                                               batch_size=train_batch_size,
+                                               class_mode='binary',shuffle=False)
 
-#      train_gen = datagen.flow_from_directory(train_path,
-#                                              target_size=(IMAGE_SIZE, IMAGE_SIZE),
-#                                              batch_size=train_batch_size,
-#                                              class_mode='binary')
+      #create a list to store 1/4 of the images with half label 0 and half label 1
+      list_train_gen_1_4 = []
+      list_train_gen_1_4.append(train_gen1[0]) #label 0
+      list_train_gen_1_4.append(train_gen1[15]) #label 1
+      list_train_gen_1_4.append(train_gen1[1]) #label 0 
+      list_train_gen_1_4.append(train_gen1[14]) #label 1
 
-#      val_gen = datagen.flow_from_directory(valid_path,
-#                                              target_size=(IMAGE_SIZE, IMAGE_SIZE),
-#                                              batch_size=val_batch_size,
-#                                              class_mode='binary', shuffle = False) 
+      #retrieve a list with the images
+      train_gen_1_4_img = []
+    
+        #retrieve a list with the labels
+      train_gen_1_4_lab = []
+    
+      batch_size = 9000 #the size of the batches
+        
+      #looping over all the images
+      for i in range(4):
+        for j in range(batch_size):
+           #append the images to the list
+           train_gen_1_4_img.append(list_train_gen_1_4[i][0][j])
+        
+           #append the labels to the list
+           train_gen_1_4_lab.append(list_train_gen_1_4[i][1][j])
 
-#      return train_gen, val_gen
+       #create a data generator function
+      datagen = ImageDataGenerator()
 
-# train_gen, val_gen = get_pcam_generators(r"C:\Users\20191819\Documents\school\2021,2022\Q3\ProjectBIA\data")
+      #defining the batch size
+      batch_size = 32
+
+      #creating an array that can be put into the flow  function
+      train_data_1_4_img = np.array(train_gen_1_4_img, dtype="float")
+
+      #creating the final 1/4 data generator
+      train_gen_1_4 = datagen.flow(train_data_1_4_img, train_gen_1_4_lab, batch_size=batch_size,shuffle=True)
+      
+      datagen = ImageDataGenerator(rescale=RESCALING_FACTOR)
+      val_gen = datagen.flow_from_directory(valid_path,
+                                              target_size=(IMAGE_SIZE, IMAGE_SIZE),
+                                              batch_size=val_batch_size,
+                                              class_mode='binary',shuffle=False) 
+  
+      return train_gen_1_4, val_gen
+
 #%%
 train_gen, val_gen = get_pcam_generators_1_4(r'C:\Users\20191819\Documents\school\2021,2022\Q3\ProjectBIA\data')
 
