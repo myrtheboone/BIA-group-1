@@ -64,7 +64,7 @@ def accuracy_loss_curves(history, epochs):
 
 
 def heatmap_confusion(model, y_true, y_prob):
-    """Function that plots the confusion matrix for a specified model with a test set containing the true classes and the predicted classes
+    """Function that plots the confusion matrix for a specified model with a test set containing the true classes and the predicted probabilities
     Output is a confusion matrix in the form of a seaborn heatmap. Predicted is on the x-axis and the true values are on the y-axis"""
     cm = confusion_matrix(y_true, y_prob>0.5)
     labels = [0,1]
