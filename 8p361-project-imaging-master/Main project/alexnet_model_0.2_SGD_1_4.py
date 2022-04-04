@@ -109,8 +109,6 @@ train_steps = train_gen.n//train_gen.batch_size
 val_steps = val_gen.n//val_gen.batch_size
 
 
-
-
 history = AlexNet.fit(train_gen, steps_per_epoch=train_steps,
                     validation_data=val_gen,
                     validation_steps=val_steps,

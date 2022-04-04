@@ -19,7 +19,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix, auc
 import numpy as np
-
+import keras
+from sklearn.metrics import roc_curve, auc
+from DataPreprocessing import get_pcam_generators
 # Plot roc curve with auc score in plot
 
 def plot_roc_curve(fpr,tpr, auc_score, title): 
@@ -87,3 +89,4 @@ def heatmap_confusion(model, y_true, y_prob):
     
     plt.title('Confusion matrix - healthy (0) or metastasis (1)', fontsize=40)
     plt.show()
+
