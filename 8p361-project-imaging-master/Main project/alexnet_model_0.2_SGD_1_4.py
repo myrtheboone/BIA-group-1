@@ -89,7 +89,7 @@ AlexNet.compile(opt, loss = 'binary_crossentropy', metrics=['accuracy'])
 
 
 
-model_name = 'model__alexnet_dropout_02_30epochs_adam_1_4' #andere keer 0.75 (voor Myrthe)
+model_name = 'model__alexnet_dropout_02_20epochs_adam_1_4' #andere keer 0.75 (voor Myrthe)
 model_filepath = model_name + '.json'
 weights_filepath = model_name + '_weights.hdf5'
 
@@ -114,7 +114,7 @@ val_steps = val_gen.n//val_gen.batch_size
 history = AlexNet.fit(train_gen, steps_per_epoch=train_steps,
                     validation_data=val_gen,
                     validation_steps=val_steps,
-                    epochs=30, callbacks=callbacks_list)
+                    epochs=20, callbacks=callbacks_list)
 
 
 #Plot ROC curves of ResNet
@@ -154,7 +154,7 @@ plot_roc_curve (fpr,tpr)
 
 print(history.history.keys())
 # summarize history for accuracy
-range_epochs = np.arange(1,31,1)
+range_epochs = np.arange(1,21,1)
 
 plt.ylim([0,1])
 plt.plot(range_epochs, history.history['accuracy'])
@@ -174,4 +174,4 @@ plt.xlabel('epoch')
 plt.legend(['train', 'validation'], loc='upper left')
 plt.show()
 
-AlexNet.save(r"C:\Users\20191819\Documents\school\2021,2022\Q3\ProjectBIA\BIA-group-1\8p361-project-imaging-master\Main project\AlexNet_drop_02_SGD")
+AlexNet.save(r"C:\Users\20191819\Documents\school\2021,2022\Q3\ProjectBIA\BIA-group-1\8p361-project-imaging-master\Main project\AlexNet_drop_02_SGD_20_epochs")
