@@ -89,7 +89,7 @@ AlexNet.compile(opt, loss = 'binary_crossentropy', metrics=['accuracy'])
 
 
 
-model_name = 'model__alexnet_dropout_02_20epochs_adam_1_4' #andere keer 0.75 (voor Myrthe)
+model_name = 'model__alexnet_dropout_02_20epochs_SGD_1_4' #andere keer 0.75 (voor Myrthe)
 model_filepath = model_name + '.json'
 weights_filepath = model_name + '_weights.hdf5'
 

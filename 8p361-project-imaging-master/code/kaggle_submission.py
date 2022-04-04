@@ -17,9 +17,9 @@ from matplotlib.pyplot import imread
 from tensorflow.keras.models import model_from_json
 
 #Change these variables to point at the locations and names of the test dataset and your models.
-TEST_PATH = 'C://Users//20192024//Documents//Project_BIA//test//test//' 
-MODEL_FILEPATH = 'C://Users//20192024//Documents//Project_BIA//BIA-group-1//8p361-project-imaging-master//Main project//model__alexnet_SGD_dropout02_20epochs.json' 
-MODEL_WEIGHTS_FILEPATH = 'C://Users//20192024//Documents//Project_BIA//BIA-group-1//8p361-project-imaging-master//Main project//model__alexnet_SGD_dropout02_20epochs_weights.hdf5'
+TEST_PATH = 'C:\\Users\\20191819\\Documents\\school\\2021,2022\\Q3\\ProjectBIA\\data\\test\\test\\' 
+MODEL_FILEPATH = 'C:\\Users\\20191819\\Documents\\school\\2021,2022\\Q3\\ProjectBIA\\BIA-group-1\\8p361-project-imaging-master\\Main project\\model__alexnet_dropout_02_20epochs_adam_1_4.json' 
+MODEL_WEIGHTS_FILEPATH =  'C:\\Users\\20191819\\Documents\\school\\2021,2022\\Q3\\ProjectBIA\\BIA-group-1\\8p361-project-imaging-master\\Main project\\model__alexnet_dropout_02_20epochs_adam_1_4_weights.hdf5'
 
 # load model and model weights
 json_file = open(MODEL_FILEPATH, 'r')
@@ -65,4 +65,4 @@ for idx in range(0, max_idx, file_batch):
 
 # save your submission
 submission.head()
-submission.to_csv('submission2.csv', index = False, header = True)
+submission.to_csv('submission_1_4_20epochs.csv', index = False, header = True)
